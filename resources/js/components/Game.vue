@@ -3,13 +3,16 @@
         <span class="game-title">Lingo</span>
         <div class="game-container">
             <div class="game-row" v-for="row in playerTurn" :key="row">
-                <div class="game-tile wrong-position" v-for="tile in word.length" :key="tile"><span class="tile-text">.</span></div>
+                <div class="game-tile wrong-position" v-for="tile in word" :key="tile"><span class="tile-text">.</span></div>
             </div>
         </div>
         <div class="seperator"></div>
-        <div class="input-container">
+        <div class="input-container" v-if="playerTurn">
             <b-form-input class="user-input" v-model="userInput" placeholder="answer here"></b-form-input>
             <b-button variant="outline-primary" @click="giveAnswer">Guess</b-button>
+        </div>
+        <div v-else>
+            <b-button variant="outline-primary" @click="newGame">Start Game</b-button>
         </div>
     </div>
 
@@ -20,28 +23,40 @@
         name: "Game",
         data: function() {
             return {
+                guessedWords: new Array(),
                 userInput: null, //user's input
-                word: "nadir", //the word to be guessed
-                playerTurn: null, //the turn of the player
+                word: null, //the word to be guessed
+                playerTurn: 0, //the turn of the player
                 playerMaxTurns: 5 //max turns allowed for a game
             }
         },
         methods:{
+            newGame: function() {
+                if(this.playerTurn <= 0) {
+                    axios.post('api/word/set').then(response => {
+                        this.playerTurn = 1;
+                    });
+                }
+            },
             giveAnswer: function () {
                 if(this.userInput) { //check if input has been given
-                    console.log(this.userInput);
-                    this.$notify({
-                        group: 'foo',
-                        type: 'error',
-                        duration: 1000,
-                        text: 'You guessed it wrong!'
+                    //this.guessedWords.push(this.userInput);
+                    axios.get('api/word/get').then(response => {
+                        alert(response.data.word);
+                        //this.wordLength = this.word.length;
                     });
+
+                    //console.log(this.userInput);
+                    // this.$notify({
+                    //     group: 'foo',
+                    //     type: 'error',
+                    //     duration: 1000,
+                    //     text: 'You guessed it wrong!'
+                    // });
                 }
             }
         },
         mounted() {
-            this.wordLength = 5; //testing purpose
-            this.playerTurn = 1; //testing purpose
         }
     }
 </script>
