@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http;
+use App\Game;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -64,4 +65,17 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+     /**
+     * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->call(function () {
+            Games::where('created_at', '<', Carbon::now()->subHours(2))->delete();
+        })->daily();
+    }
 }

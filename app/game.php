@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class game extends Model
 {
     protected $fillable = [
-        'word'
+        'uuid', 'word'
     ];
 
     protected $hidden = [
         'id', 'created_at', 'updated_at'
     ];
-
-    public $table = "game";
 }

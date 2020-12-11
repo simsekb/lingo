@@ -1,9 +1,10 @@
 <template>
     <div id="game">
-        <span class="game-title">Lingo</span>
+        <span class="uuid">{{ this.playerUuid }}</span>
+        <span class="game-title">Lin<span class="game-go">go</span></span>
         <div class="game-container">
             <div class="game-row" v-for="row in playerTurn" :key="row">
-                <div class="game-tile wrong-position" v-for="tile in word" :key="tile"><span class="tile-text">.</span></div>
+                <div class="game-tile" v-for="tile in 5" :key="tile"><span class="tile-text">.</span></div>
             </div>
         </div>
         <div class="seperator"></div>
@@ -25,25 +26,31 @@
             return {
                 guessedWords: new Array(),
                 userInput: null, //user's input
-                word: null, //the word to be guessed
                 playerTurn: 0, //the turn of the player
-                playerMaxTurns: 5 //max turns allowed for a game
+                playerMaxTurns: 5, //max turns allowed for a game
+                playerUuid: null
             }
         },
         methods:{
             newGame: function() {
                 if(this.playerTurn <= 0) {
-                    axios.post('api/word/set').then(response => {
-                        this.playerTurn = 1;
+                    this.getUuid().then(uuid_response => {
+                        this.playerUuid = uuid_response.data;
+
+                        axios.post('api/word/set', { uuid: this.playerUuid }).then(newGame_response => {
+                            this.playerTurn = 1;
+                        });
                     });
                 }
             },
+            getUuid: function() {
+                return axios.get('api/word/uuid');
+            },
             giveAnswer: function () {
                 if(this.userInput) { //check if input has been given
-                    //this.guessedWords.push(this.userInput);
-                    axios.get('api/word/get').then(response => {
-                        alert(response.data.word);
-                        //this.wordLength = this.word.length;
+                    axios.post('api/word/guess', { word: this.userInput }).then(response => {
+                        this.guessedWords.push(this.userInput);
+                        this.playerTurn++;
                     });
 
                     //console.log(this.userInput);
@@ -69,12 +76,22 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
+        position: relative;
+    }
+    .uuid {
+        position: absolute;
+        top: 0px;
+        right: 10px;
     }
     .game-title {
         font-size: 3rem;
         font-weight: 700;
         margin-bottom: 20px;
         text-align: center;
+        font-family: cursive;
+    }
+    .game-go {
+        color: #007bff;
     }
     .game-container {
     }
