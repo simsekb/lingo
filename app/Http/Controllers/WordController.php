@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Word;
 use App\Game;
 
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 
 class WordController extends Controller
@@ -23,8 +24,11 @@ class WordController extends Controller
     }
     public function guessWord(Request $request) {
         $word = $request->input('word'); //word that has been guessed
+        $uuid = $request->input('uuid'); //uuid
+
         if($word) {
-            $currentWord = Game::find(1)->value('word');
+            $game = Game::where('uuid', $uuid)->first();
+            $currentWord = $game->word;
 
             echo 'Given word: ' . $word . "\n";
             echo 'Current word: ' . $currentWord . "\n";
@@ -33,7 +37,8 @@ class WordController extends Controller
             $arr2 = str_split($word); //the word that the player has given split up in the array
             $arr3 = array(); //array with the correct values and positions
             echo 'Correct: ' . "\n";
-            for ($i = 0; $i < count($arr1); $i++) { 
+            for ($i = 0; $i < count($arr1); $i++) {
+                echo 'stront: ' . $i . "\n";
                 if($arr1[$i] == $arr2[$i]) {
                     array_push($arr3, [$i, $arr1[$i]]);
                     //echo 'idx: ' . $i . ', value: ' . $arr1[$i] . "\n";
@@ -47,8 +52,6 @@ class WordController extends Controller
                 $position = strpos ($currentWord, $letter);
                 if($position !== false && !in_array([$position, $letter], $arr3)) {
                     array_push($arr4, [$position, $letter]);
-                    // echo 'Letter: ' . $letter;
-                    // echo ' in pos: ' . $position . "\n";
                 }
             }
             print_r($arr4);
@@ -57,6 +60,34 @@ class WordController extends Controller
 
             } 
         }
+        return response()->json([
+            'size' => count($arr1),
+            'good' => '',
+            'almost' => '',
+            'wrong' => ''
+        ]);
+    }
+    public function camouflageWord($uuid) {
+        $game = Game::where('uuid', $uuid)->first();
+        $word = $game->word;
+
+        $camo = '';
+        for ($i = 2; $i < strlen($word); $i++) {
+            $camo .= '.';
+        }
+
+        $camouflagedWord = substr_replace($word, $camo, 2);
+    
+        return response()->json([
+            'camo' => $camouflagedWord
+        ]);
+    }
+    public function getLength($uuid) {
+        $game = Game::where('uuid', $uuid)->first();
+
+        return response()->json([
+            'size' => strlen($game->word)
+        ]);
     }
     public function deleteGame(Request $request) { //delete a game after it has been played
         $gameId = Game::where('id', $request->input('id'))->first();

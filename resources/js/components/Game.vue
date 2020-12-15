@@ -2,14 +2,16 @@
     <div id="game">
         <span class="uuid">{{ this.playerUuid }}</span>
         <span class="game-title">Lin<span class="game-go">go</span></span>
-        <div class="game-container">
-            <div class="game-row" v-for="row in playerTurn" :key="row">
-                <div class="game-tile" v-for="tile in 5" :key="tile"><span class="tile-text">.</span></div>
+        <div class="game-container" v-if="guessedWords.length">
+            <div class="game-row" v-for="(row, r) in playerTurn" :key="r">
+                <div class="game-tile" v-for="(tile, t) in guessedWords[r].length" :key="t">
+                    <span class="tile-text">{{ guessedWords[r].charAt(t) }}</span>
+                </div>
             </div>
         </div>
         <div class="seperator"></div>
         <div class="input-container" v-if="playerTurn">
-            <b-form-input class="user-input" v-model="userInput" placeholder="answer here"></b-form-input>
+            <b-form-input class="user-input" v-model="userInput" placeholder="answer here" required></b-form-input>
             <b-button variant="outline-primary" @click="giveAnswer">Guess</b-button>
         </div>
         <div v-else>
@@ -28,7 +30,8 @@
                 userInput: null, //user's input
                 playerTurn: 0, //the turn of the player
                 playerMaxTurns: 5, //max turns allowed for a game
-                playerUuid: null
+                playerUuid: null,
+                isFetching: true
             }
         },
         methods:{
@@ -39,27 +42,36 @@
 
                         axios.post('api/word/set', { uuid: this.playerUuid }).then(newGame_response => {
                             this.playerTurn = 1;
+                            axios.get('api/word/camo/' + this.playerUuid).then(response => {
+                                this.guessedWords.push(response.data.camo);
+                            });
                         });
                     });
                 }
+            },
+            throwMessage: function(type, text) {
+                this.$notify({
+                    group: 'foo',
+                    type: type,
+                    duration: 1000,
+                    text: text
+                }); 
             },
             getUuid: function() {
                 return axios.get('api/word/uuid');
             },
             giveAnswer: function () {
-                if(this.userInput) { //check if input has been given
-                    axios.post('api/word/guess', { word: this.userInput }).then(response => {
+                if(!this.userInput) {
+                    this.throwMessage("error", "You need to fill something in!");
+                }
+                if(this.userInput.length == this.guessedWords[0].length) { //check length of first word in list
+                    axios.post('api/word/guess', { word: this.userInput, uuid: this.playerUuid }).then(response => {
                         this.guessedWords.push(this.userInput);
                         this.playerTurn++;
                     });
-
-                    //console.log(this.userInput);
-                    // this.$notify({
-                    //     group: 'foo',
-                    //     type: 'error',
-                    //     duration: 1000,
-                    //     text: 'You guessed it wrong!'
-                    // });
+                }
+                else {
+                    this.throwMessage("error", 'Guessed word needs to be ' + this.guessedWords[0].length + " letters long. Current length: " + this.userInput.length);
                 }
             }
         },
@@ -84,7 +96,7 @@
         right: 10px;
     }
     .game-title {
-        font-size: 3rem;
+        font-size: 5rem;
         font-weight: 700;
         margin-bottom: 20px;
         text-align: center;
@@ -92,8 +104,6 @@
     }
     .game-go {
         color: #007bff;
-    }
-    .game-container {
     }
     .game-row {
         display: flex;
@@ -105,8 +115,8 @@
         margin-bottom: 15px;
     }
     .game-tile {
-        width: 100px;
-        height: 100px;
+        width: 70px;
+        height: 70px;
         display: flex;
         justify-content: center;
         align-items: center;
