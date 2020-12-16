@@ -4,15 +4,15 @@
         <span class="game-title">Lin<span class="game-go">go</span></span>
         <div class="game-container" v-if="guessedWords.length">
             <div class="game-row" v-for="(row, r) in playerTurn" :key="r">
-                <div class="game-tile" v-for="(tile, t) in guessedWords[r].length" :key="t">
+                <div class="game-tile" v-for="(tile, t) in guessedWords[r].length" :key="t" :id="r + '-' + t">
                     <span class="tile-text">{{ guessedWords[r].charAt(t) }}</span>
                 </div>
             </div>
         </div>
         <div class="seperator"></div>
         <div class="input-container" v-if="playerTurn">
-            <b-form-input class="user-input" v-model="userInput" placeholder="answer here" required></b-form-input>
-            <b-button variant="outline-primary" @click="giveAnswer">Guess</b-button>
+            <b-form-input id="answer-input" class="user-input" v-model="userInput" placeholder="answer here" required></b-form-input>
+            <b-button id="answer-button" variant="outline-primary" @click="giveAnswer">Guess</b-button>
         </div>
         <div v-else>
             <b-button variant="outline-primary" @click="newGame">Start Game</b-button>
@@ -30,8 +30,7 @@
                 userInput: null, //user's input
                 playerTurn: 0, //the turn of the player
                 playerMaxTurns: 5, //max turns allowed for a game
-                playerUuid: null,
-                isFetching: true
+                playerUuid: null
             }
         },
         methods:{
@@ -49,16 +48,20 @@
                     });
                 }
             },
-            throwMessage: function(type, text) {
+            throwMessage: function(type, text, duration = 1000) {
                 this.$notify({
                     group: 'foo',
                     type: type,
-                    duration: 1000,
+                    duration: duration,
                     text: text
                 }); 
             },
             getUuid: function() {
                 return axios.get('api/word/uuid');
+            },
+            endGame: function() {
+                document.getElementById("answer-button").disabled = true;
+                document.getElementById("answer-input").disabled = true;
             },
             giveAnswer: function () {
                 if(!this.userInput) {
@@ -68,14 +71,39 @@
                     axios.post('api/word/guess', { word: this.userInput, uuid: this.playerUuid }).then(response => {
                         this.guessedWords.push(this.userInput);
                         this.playerTurn++;
+
+                        var arrGoods = response.data.good;
+                        var arrAlmosts = response.data.almost;
+
+                        console.log('goods: ', arrGoods);
+                        console.log('almosts: ', arrAlmosts);
+
+                        if(arrGoods.length >= this.guessedWords[0].length && arrAlmosts.length <= 0) {
+                            //win
+                            this.throwMessage("success", "You won. Congratulations!", -1);
+                        }
+                        else if(this.playerTurn > 5) {
+                            //lost
+                            this.throwMessage("error", "You have lost the game. Sad!", -1);
+                        }
+                        else {
+                            if(arrGoods) {
+                                for (let i = 0; i < arrGoods.length; i++) {
+                                    document.getElementById(this.playerTurn + '-' + arrGoods[i]).className += ' correct-letter';
+                                }
+                            }
+                            if(arrAlmosts) {
+                                for (let i = 0; i < arrAlmosts.length; i++) {
+                                    document.getElementById(this.playerTurn + '-' + arrAlmosts[i]).className += ' wrong-position';
+                                }
+                            }
+                        }
                     });
                 }
                 else {
                     this.throwMessage("error", 'Guessed word needs to be ' + this.guessedWords[0].length + " letters long. Current length: " + this.userInput.length);
                 }
             }
-        },
-        mounted() {
         }
     }
 </script>

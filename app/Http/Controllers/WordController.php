@@ -30,41 +30,41 @@ class WordController extends Controller
             $game = Game::where('uuid', $uuid)->first();
             $currentWord = $game->word;
 
-            echo 'Given word: ' . $word . "\n";
-            echo 'Current word: ' . $currentWord . "\n";
+            // echo 'Given word: ' . $word . "\n";
+            // echo 'Current word: ' . $currentWord . "\n";
 
             $arr1 = str_split($currentWord); //the current word of the game split up in the array
             $arr2 = str_split($word); //the word that the player has given split up in the array
+
             $arr3 = array(); //array with the correct values and positions
-            echo 'Correct: ' . "\n";
+
+            //echo 'Correct: ' . "\n";
             for ($i = 0; $i < count($arr1); $i++) {
-                echo 'stront: ' . $i . "\n";
                 if($arr1[$i] == $arr2[$i]) {
-                    array_push($arr3, [$i, $arr1[$i]]);
+                    array_push($arr3, $i);
                     //echo 'idx: ' . $i . ', value: ' . $arr1[$i] . "\n";
                 } 
             }
-            print_r($arr3);
-
+            //print_r($arr3);
             $arr4 = array();
-            echo 'Almost: ' . "\n";
-            foreach (str_split($word) as $letter) {
-                $position = strpos ($currentWord, $letter);
-                if($position !== false && !in_array([$position, $letter], $arr3)) {
-                    array_push($arr4, [$position, $letter]);
+
+            //echo 'Almost: ' . "\n";
+            foreach (str_split($word) as $position => $letter) {
+                // echo 'test: ' . $position . "\n";
+
+                if(strpos($currentWord, $letter) && !in_array($position, $arr3)) {
+                    array_push($arr4, $position);
                 }
             }
-            print_r($arr4);
+            //print_r($arr4);
 
-            foreach (str_split($word) as $letter) {
+            // foreach (str_split($word) as $letter) {
 
-            } 
+            // } 
         }
         return response()->json([
-            'size' => count($arr1),
-            'good' => '',
-            'almost' => '',
-            'wrong' => ''
+            'good' => $arr3,
+            'almost' => $arr4
         ]);
     }
     public function camouflageWord($uuid) {
