@@ -14,13 +14,13 @@ class WordController extends Controller
         return $uuid;
     }
     public function setWord(Request $request) {
-        $word = Word::inRandomOrder()->limit(1)->value('word'); //get a random word
+        $word = Word::whereRaw('LENGTH(word) <= ?', [8])->inRandomOrder()->first(); //get a random word
         $uuid = $request->input('uuid'); //word that has been guessed
 
         // echo 'TEST: ' . $uuid . ', ' . 'word: ' . $word;
 
-        Game::create(array('uuid' => $uuid, 'word' => $word)); //there is no word selected, add it to the db
-        return response('Word has been chosen, nothing to see here.', 200);
+        Game::create(array('uuid' => $uuid, 'word' => $word->word)); //add word to the db
+        return $word->word;
     }
     public function guessWord(Request $request) {
         $word = $request->input('word'); //word that has been guessed
