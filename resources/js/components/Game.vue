@@ -4,7 +4,7 @@
         <span class="game-title">Lin<span class="game-go">go</span></span>
         <div class="game-container" v-if="guessedWords.length">
             <div class="game-row" v-for="(row, r) in playerTurn" :key="r">
-                <div class="game-tile" v-for="(tile, t) in guessedWords[r].length" :key="t" :id="r + '-' + t">
+                <div class="game-tile" v-for="(tile, t) in guessedWords[r].length" :key="t" :id="r + '' + t">
                     <span class="tile-text">{{ guessedWords[r].charAt(t) }}</span>
                 </div>
             </div>
@@ -78,26 +78,37 @@
                         console.log('goods: ', arrGoods);
                         console.log('almosts: ', arrAlmosts);
 
-                        if(arrGoods.length >= this.guessedWords[0].length && arrAlmosts.length <= 0) {
-                            //win
-                            this.throwMessage("success", "You won. Congratulations!", -1);
-                        }
-                        else if(this.playerTurn > 5) {
-                            //lost
-                            this.throwMessage("error", "You have lost the game. Sad!", -1);
-                        }
-                        else {
+                        this.$nextTick(() => {
+
+                            if(arrGoods.length >= this.guessedWords[0].length && arrAlmosts.length <= 0) {
+                                //win
+                                this.throwMessage("success", "You won. Congratulations!", -1);
+                                this.endGame();
+                            }
+                            else if(this.playerTurn > 5) {
+                                //lost
+                                this.throwMessage("error", "You have lost the game. Sad!", -1);
+                                this.endGame();
+                            }
+
                             if(arrGoods) {
                                 for (let i = 0; i < arrGoods.length; i++) {
-                                    document.getElementById(this.playerTurn + '-' + arrGoods[i]).className += ' correct-letter';
+                                    var tileId = (this.playerTurn-1) + String(arrGoods[i]);
+                                    //console.log('arrGoods: ' + tileId);
+
+                                    //console.log('lekekrjoh: ', document.getElementById(tileId));
+                                    document.getElementById(tileId).classList.add('correct-letter');
                                 }
                             }
                             if(arrAlmosts) {
                                 for (let i = 0; i < arrAlmosts.length; i++) {
-                                    document.getElementById(this.playerTurn + '-' + arrAlmosts[i]).className += ' wrong-position';
+                                    var tileId = (this.playerTurn-1) + String(arrAlmosts[i]);
+                                    //console.log('arrAlmosts: ' + tileId);
+
+                                    document.getElementById(tileId).classList.add('wrong-position');
                                 }
                             }
-                        }
+                        });
                     });
                 }
                 else {
