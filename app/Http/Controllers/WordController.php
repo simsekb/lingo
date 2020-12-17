@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\word;
-use App\Models\game;
+use App\Models\Word;
+use App\Models\Game;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
