@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-$DATABASE_URL = parse_url('DATABASE_URL'); //https://medium.com/@juangsalazprabowo/how-to-deploy-a-laravel-app-into-heroku-df55efbf8e4e
+$DATABASE_URL = parse_url('postgres://oplihnuptbjnnt:9664ebfce3cf3b21f95ebe072386b513e17d95dc041d564c58357a49ee16eae7@ec2-54-217-224-85.eu-west-1.compute.amazonaws.com:5432/dcl1t8coj7p4kc'); //https://medium.com/@juangsalazprabowo/how-to-deploy-a-laravel-app-into-heroku-df55efbf8e4e
 
 return [
 
