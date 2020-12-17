@@ -21,8 +21,11 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot() 
     {
-        //
+        //https://stackoverflow.com/questions/34378122/load-blade-assets-with-https-in-laravel
+        if(config('app.env') === 'production') {
+            \URL::forceScheme('https');
+        }
     }
 }
