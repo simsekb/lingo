@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Word;
-use App\Game;
+use \App\Word;
+use \App\Game;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
