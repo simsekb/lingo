@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\word;
-use App\Http\game;
+use App\word;
+use App\game;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
@@ -21,7 +21,6 @@ class WordController extends Controller
         // echo 'TEST: ' . $uuid . ', ' . 'word: ' . $word;
 
         Game::create(array('uuid' => $uuid, 'word' => $word->word)); //add word to the db
-        return $word->word;
     }
     public function guessWord(Request $request) {
         $word = $request->input('word'); //word that has been guessed

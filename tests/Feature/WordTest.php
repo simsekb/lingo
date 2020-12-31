@@ -19,4 +19,19 @@ class WordTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function setUuid() {
+        $response = $this->action('GET', 'WordController@setUuid'); //get because nothing is being pulled from the database
+        return $response;
+    }
+
+    public function getLength() {
+        $response = $this->action('GET', 'WordController@getLength', ['uuid' => '']);
+        return $response;
+    }
+
+    public function camouflagedWord() {
+        $response = $this->action('GET', 'WordController@camouflageWord', ['uuid' => '']);
+        return $response;
+    }
 }
