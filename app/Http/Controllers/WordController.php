@@ -92,7 +92,7 @@ class WordController extends Controller
     public function deleteGame(Request $request) { //delete a game after it has been played
         $gameId = Game::where('id', $request->input('id'))->first();
 
-        $game = subHeader::find($gameId);
+        $game = Game::find($gameId);
         return $game->delete();
     }
     // public function getWord() {
