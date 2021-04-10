@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-$DATABASE_URL = parse_url('postgres://oplihnuptbjnnt:9664ebfce3cf3b21f95ebe072386b513e17d95dc041d564c58357a49ee16eae7@ec2-54-217-224-85.eu-west-1.compute.amazonaws.com:5432/dcl1t8coj7p4kc'); //https://medium.com/@juangsalazprabowo/how-to-deploy-a-laravel-app-into-heroku-df55efbf8e4e
+//$DATABASE_URL = parse_url('postgres://oplihnuptbjnnt:9664ebfce3cf3b21f95ebe072386b513e17d95dc041d564c58357a49ee16eae7@ec2-54-217-224-85.eu-west-1.compute.amazonaws.com:5432/dcl1t8coj7p4kc'); //https://medium.com/@juangsalazprabowo/how-to-deploy-a-laravel-app-into-heroku-df55efbf8e4e
 
 return [
 
@@ -18,6 +18,7 @@ return [
     */
 
     'default' => env('DB_CONNECTION', 'mysql'), //mysql/pgsql
+
 
     /*
     |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
@@ -65,20 +66,20 @@ return [
             ]) : [],
         ],
 
-        'pgsql' => [
-            'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
-            'host' => $DATABASE_URL['host'],
-            'port' => $DATABASE_URL['port'],
-            'database' => ltrim($DATABASE_URL['path'], "/"),
-            'username' => $DATABASE_URL['user'],
-            'password' => $DATABASE_URL['pass'],
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'schema' => 'public',
-            'sslmode' => 'prefer',
-        ],
+        // 'pgsql' => [
+        //     'driver' => 'pgsql',
+        //     'url' => env('DATABASE_URL'),
+        //     'host' => $DATABASE_URL['host'],
+        //     'port' => $DATABASE_URL['port'],
+        //     'database' => ltrim($DATABASE_URL['path'], "/"),
+        //     'username' => $DATABASE_URL['user'],
+        //     'password' => $DATABASE_URL['pass'],
+        //     'charset' => 'utf8',
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'schema' => 'public',
+        //     'sslmode' => 'prefer',
+        // ],
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',

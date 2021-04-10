@@ -11,8 +11,7 @@ use Illuminate\Http\Request;
 class WordController extends Controller
 {
     public function setUuid() {
-        $uuid = uniqid();
-        return $uuid;
+        return uniqid();
     }
     public function setWord(Request $request) {
         $word = Word::whereRaw('LENGTH(word) <= ?', [8])->inRandomOrder()->first(); //get a random word
@@ -28,28 +27,28 @@ class WordController extends Controller
             $game = Game::where('uuid', $uuid)->first();
             $currentWord = $game->word;
 
-            $arr1 = str_split($currentWord); //the current word of the game split up in the array
-            $arr2 = str_split($word); //the word that the player has given split up in the array
+            $arrCurrentWord = str_split($currentWord); //the current word of the game split up in the array
+            $arrUserInput = str_split($word); //the word that the player has given split up in the array
 
-            $arr3 = array(); //array with the correct values and positions
+            $arrCorrectAnswer = array(); //array with the correct values and positions
 
-            for ($i = 0; $i < count($arr1); $i++) {
-                if($arr1[$i] == $arr2[$i]) {
-                    array_push($arr3, $i);
+            for ($i = 0; $i < count($arrCurrentWord); $i++) {
+                if($arrCurrentWord[$i] == $arrUserInput[$i]) {
+                    array_push($arrCorrectAnswer, $i);
                 } 
             }
-            $arr4 = array();
+            $arrAlmostPositions = array();
 
             foreach (str_split($word) as $position => $letter) {
 
-                if(strpos($currentWord, $letter) && !in_array($position, $arr3)) {
-                    array_push($arr4, $position);
+                if(strpos($currentWord, $letter) && !in_array($position, $arrCorrectAnswer)) {
+                    array_push($arrAlmostPositions, $position);
                 }
             }
         }
         return response()->json([
-            'good' => $arr3,
-            'almost' => $arr4
+            'good' => $arrCorrectAnswer,
+            'almost' => $arrAlmostPositions
         ]);
     }
     public function camouflageWord($uuid) {
