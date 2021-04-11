@@ -1,4 +1,4 @@
-# lingo
+# Lingo
 
 A project of a Lingo game that contains:
 - Unit testing by PhpUnit
