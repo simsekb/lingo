@@ -40,7 +40,7 @@ class ImportWords extends Command
     public function handle()
     {
         //logic to open the file & write to the db
-        $file = $this->ask('Enter CSV file path');
+        $file = $this->ask('Enter file name/path');
 
         echo 'Attempting to fill database..' . "\r\n";
         $handle = fopen($file, 'r');

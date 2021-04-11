@@ -15,9 +15,10 @@ class WordController extends Controller
     }
     public function setWord(Request $request) {
         $word = Word::whereRaw('LENGTH(word) <= ?', [8])->inRandomOrder()->first(); //get a random word
-        $uuid = $request->input('uuid'); //word that has been guessed
+        $uuid = $request->input('uuid');
 
         Game::create(array('uuid' => $uuid, 'word' => $word->word)); //add word to the db
+        return response()->json(['uuid' => $uuid]);
     }
     public function guessWord(Request $request) {
         $word = $request->input('word'); //word that has been guessed

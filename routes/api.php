@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('word/set', 'WordController@setWord');
 Route::post('word/guess', 'WordController@guessWord');
-// Route::get('word/get', 'WordController@getWord');
+
 Route::get('word/uuid', 'WordController@setUuid');
 Route::get('word/length/{uuid}', 'WordController@getLength');
 Route::get('word/camo/{uuid}', 'WordController@camouflageWord');
